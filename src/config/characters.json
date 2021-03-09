@@ -1,0 +1,18 @@
+{
+    "characters": [
+        {
+            "cId": 1,
+            "name": "丁",
+            "strokes": [ 
+                1, 9
+            ]
+        },
+        {
+            "cId": 2,
+            "name": "山",
+            "strokes": [ 
+                2, 3, 3
+            ]
+        }
+    ]
+}
