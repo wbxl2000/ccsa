@@ -4,7 +4,6 @@ import _ from 'lodash';
 import './App.css';
 
 import strokesData from './config/strokes-detail.json';
-import systemInfo from './config/system-info.json';
 import { images } from './config/images.json';
 
 import {
@@ -18,7 +17,7 @@ import {
   Character,
   ButtonWrapper,
   StrokePicture,
-  Strokes,
+  StrokeNameList,
   CurrentStrokeWrapper,
   TitleTextSpan,
   ContextRegularSpan,
@@ -31,7 +30,7 @@ import {
 
 // import StrokePicker from './components/stroke-picker';
 
-import { Button, Radio, Image, Descriptions, Badge, message, Input } from 'antd';
+import { Button, Radio, Progress, Image, Descriptions, Badge, message, Input, Spin, Alert } from 'antd';
 
 import { UserOutlined } from '@ant-design/icons';
 
@@ -74,28 +73,34 @@ const TextRegular = (text) => {
 }
 
 
-const DescriptionArea = (currentStroke) => {
-  const origin = currentStroke.src;
-  const nowPoint = currentStroke.status.nowPoint;
-  const length = currentStroke.src.strokeOrder.length;
+const DescriptionArea = (currentStroke, tempPointsLength) => {
+  const length = currentStroke.strokeOrderLength;
   return (
-    <Descriptions title={
-      <TitleWrapper>
-        <TitleTextSpan>当前笔画信息：{`${origin.id} - ${origin.name}`} </TitleTextSpan>
-        <div>
-          <Badge status={nowPoint === length ? "success" : "processing"}></Badge>
-          {TextRegular(`关键点标记进度[${nowPoint}/${length}]`)}
-        </div>
-      </TitleWrapper>
-    } bordered>
+    <Descriptions 
+      style={{ width: "650px", padding: "20px", 
+        border: "1px solid black",
+        borderRadius: "10px",
+        borderTop: "1px solid white"}}
+      title={
+        <TitleWrapper>
+          <TitleTextSpan>当前笔画信息：{`${currentStroke.id} - ${currentStroke.name}`} </TitleTextSpan>
+          <div>
+            {/* <Badge status={tempPointsLength === length ? "success" : "processing"}></Badge> */}
+            {TextRegular(`关键点标记进度[${tempPointsLength}/${length}]: `)}
+            <Progress percent={(tempPointsLength/length)*100} steps={length} showInfo={false}/>
+          </div>
+        </TitleWrapper>
+      } 
+      bordered
+    >
       <Descriptions.Item label={TextRegular('笔画示意图')}>
         <ImageContainer>
-          <Image src={`/assets/stroke-example/${currentStroke.src.strokeOrder.imageUrl}`} />
+          <Image src={`/assets/stroke-example/${currentStroke.strokeOrderImageUrl}`} />
         </ImageContainer>
       </Descriptions.Item>
       <Descriptions.Item label={TextRegular('节点分布图')} span={2}>
         <ImageContainer>
-          <Image src={`/assets/stroke-order/${currentStroke.src.strokeOrder.imageUrl}`} />
+          <Image src={`/assets/stroke-order/${currentStroke.strokeOrderImageUrl}`} />
         </ImageContainer>
       </Descriptions.Item>
     </Descriptions>
@@ -119,101 +124,87 @@ const getMapImageCIds = () => {
   return res;
 }
 
-
-const ResultResponse = (id) => {
-  // const promise = axios.get("http://localhost:4000/api/characters?id=" + id);
-
-  // const dataPromise = promise.then((response) => response.data);
-
-  // return dataPromise;
-
-  async function getData() {
-    return await axios.get("http://localhost:4000/api/characters?id=" + id);
-  }
-  
-  (async () => {
-    // console.log(await getData().data)
-    return await getData().data
-  })()
-  
-  // return (
-  //   // char ? (
-  //   //   char.strokes.map((item) => {
-  //   //     let name = "";
-  //   //     strokesData.strokes.forEach((item2) => {
-  //   //       if (item2.id === item) {
-  //   //         name = item2.name;
-  //   //       }
-  //   //     });
-  //   //     // console.log(result, item, result[`s_${item}`]);
-  //   //     return (
-  //   //       <div>
-  //   //         {name}: {result[`s_${item}`].map(item => {
-  //   //           return JSON.stringify(item);
-  //   //         })}
-  //   //       </div>
-  //   //     )
-  //   //   })
-  //   // ) : null
-  //     <div></div>
-  // )
-}
-
 const App = () => {
   // useRef Hooks
   const canvasRef = useRef(null);
   
-  // useEffect Hooks
-  const [ ImagesUrls, MapUrls ] = useState({});
-  const [ ImagesCIds, MapCIds] = useState({});
-  const [ currentImageInfo, setInfo ] = useState({
-    id: systemInfo.currentImageId,
-    dataSetId: systemInfo.dataSetId,
-    author: systemInfo.author
-  });
-  const [ currentStroke, setStroke ] = useState({
-    status: {
-      nowPoint: 0,
-      nowStroke: 1
-    },
-    src: {
-      id: 1,
-      name: "横",
-      strokeOrder: {
-        length: 2,
-        imageUrl: "stroke-01.png"
-      },
-      exampleUrl: "stroke-01.png",
-      connections: [
-        [1, 2]
-      ]
-    }
-  });
-  let defaultResult = { };
-  for (let i = 1; i <= 31; ++i) {
-    defaultResult[`s_${i}`] = [];
-  }
-  const [ result, setResult ] = useState(defaultResult);
+  // useState Hooks
+  const [ currentStroke, setCurrentStroke ] = useState({});
+  const [ currentChar, setCurrentChar ] = useState({});
+  const [ strokeList, setStrokeList ] = useState({});
+  const [ strokeIndex, setStrokeIndex ] = useState(1); // 现在是第几个笔画
+  const [ strokeCompleted,  setStrokeCompleted] = useState(false); // 记录是否完成当前字
+  const [ imagesUrls, mapUrls ] = useState({});
+  const [ systemInfo, setSystemInfo ] = useState({});
+  const [ result, setResult ] = useState([]);
   const [ tempPoints, addPoints ] = useState([]);
 
+  // Loading
+  const [ sysInfoLoading, setSysInfoLoading ] = useState(true);
+  const [ currentCharLoading, setCurrentCharLoading ] = useState(true);
+  const [ strokeListLoading, setStrokeListLoading ] = useState(true);
+  const [ submitLoading, setSubmitLoading ] = useState(false);
+  const [ submitSuccess, setSubmitSuccess ] = useState(false);
+
   // useEffect Hooks
-  useEffect(RegisterListener, []);
-  useEffect(() => MapUrls(getMapImageUrls), []);
-  useEffect(() => MapCIds(getMapImageCIds), []);
+    // init char
   useEffect(() => {
-    if (currentStroke.status.nowPoint === currentStroke.src.strokeOrder.length) {
-      message.success('此笔画已完成，按下快捷键「C」进入下一个笔画');
-      return;
-    }
-  }, [currentStroke])
+    (async () => {
+      setSysInfoLoading(() => true);
+      const reqResult = await axios('http://localhost:4000/api/system-info');
+      setSystemInfo(() => reqResult.data);
+      setSysInfoLoading(() => false);
+    })();
+    canvasClear(); // 顺便清空一下canvas
+  }, [ submitSuccess ]);
+    // 重新获取字的信息和笔画的信息
+  useEffect(() => {
+    if (sysInfoLoading) return;
+    (async () => {
+      setCurrentCharLoading(() => true);
+      const reqResult = await axios('http://localhost:4000/api/character-info?id=' + systemInfo.currentImageId);
+      setCurrentChar(() => reqResult.data);
+      setCurrentCharLoading(() => false);
+      setSubmitSuccess(() => false);
+      setStrokeIndex(() => 1);
+      setStrokeCompleted(() => false);
+      setResult(() => []);
+    })();
+  }, [ sysInfoLoading, systemInfo ]);
+    // 如果获取了字的信息，那么更新笔画的信息
+  useEffect(() => {
+    if (currentCharLoading) return;
+    (async () => {
+      setStrokeListLoading(() => true);
+      const reqResult = await axios('http://localhost:4000/api/strokes-list?id=' + currentChar.c_id);
+      setStrokeList(() => reqResult.data);
+      setStrokeListLoading(() => false);
+    })();
+  }, [ currentCharLoading, currentChar ]);
+    // 笔画列表动了，那笔画进度肯定要清零。
+  useEffect(() => {
+    setStrokeIndex(() => 1);
+  }, [ strokeList ]);
+    // 笔画进度一旦修改，那么当前笔画一定要更新，缓存数据要清零
+  useEffect(() => {
+    if (strokeListLoading) return;
+    setCurrentStroke(() => strokesData.strokes[strokeList[strokeIndex-1]-1]);
+    addPoints(() => []);
+  }, [ strokeListLoading, strokeIndex ]);
 
-  const submitStroke = () => {
-    setResult(() => result[`s_${currentStroke.src.id}`].push(tempPoints));
-    addPoints([]);
-  }
 
-  const Paint = (e) => {
-    if (currentStroke.status.nowPoint + 1 > currentStroke.src.strokeOrder.length) {
+  useEffect(() => RegisterListener, []);
+  useEffect(() => mapUrls(getMapImageUrls), []);
+  // useEffect(() => {
+  //   if (tempPoints.length === currentStroke.strokeOrderLength) {
+  //     message.success('此笔画已完成，按下快捷键「C」进入下一个笔画');
+  //     return;
+  //   }
+  // }, [ tempPoints ]);
+
+  const Paint = (e) => { // 每次点击canvas
+    // console.log(tempPoints.length, currentStroke.strokeOrderLength);
+    if (tempPoints.length + 1 > currentStroke.strokeOrderLength) {
       message.error('关键点数量溢出，请检查数量');
       return;
     }
@@ -227,13 +218,7 @@ const App = () => {
     ctx.strokeStyle = "magenta";
     ctx.fillStyle = "magenta";
     ctx.stroke();
-    setStroke({
-      status: {
-        nowPoint: currentStroke.status.nowPoint + 1,
-        nowStroke: currentStroke.status.nowStroke
-      },
-      src: currentStroke.src
-    });
+    console.log(tempPoints);
     addPoints(() => {
       return [...tempPoints, [x, y]];
     });
@@ -243,102 +228,163 @@ const App = () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, 256, 256);
-    setStroke({
-      status: {
-        nowPoint: 0,
-        nowStroke: currentStroke.status.nowStroke
-      },
-      src: currentStroke.src
-    });
-    addPoints([]);
+    addPoints(() => []);
   }
 
   const nextStroke = () => {
-    // characters[`c_${currentStroke.src.id}`].strokes
-    // const ns = strokesData.strokes[currentStroke.status.nowStroke]
-    setStroke({
-      status: {
-        nowPoint: 0,
-        nowStroke: currentStroke.status.nowStroke + 1
-      },
-      src: {
-        id: strokesData.strokes[currentStroke.status.nowStroke],
-        name: "横",
-        strokeOrder: {
-          length: 2,
-          imageUrl: "stroke-01.png"
-        },
-        exampleUrl: "stroke-01.png",
-        connections: [
-          [1, 2]
-        ]
-      }
-    });
+    if (strokeCompleted) {
+      message.warning("已经录入完成所有笔画，请进入下一个字");
+      return;
+    }
+    const thisStroke = {
+      id: currentStroke.id,
+      name: currentStroke.name,
+      record: tempPoints
+    } 
     canvasClear();
-    setResult(() => {
-      const origin = result;
-      origin[`s_${currentStroke.src.id}`].push(tempPoints);
-      return origin;
-    });
-    addPoints([]);
+    setResult(() => [...result, thisStroke]);
+    if (strokeIndex < strokeList.length) {
+      setStrokeIndex(strokeIndex => strokeIndex + 1);
+    } else {
+      setStrokeCompleted(true);
+    }
   }
 
+  const reStartChar = () => {
+    canvasClear();
+    setResult(() => []);
+    setStrokeCompleted(() => false);
+    setStrokeIndex(() => 1);
+  }
+
+  const submitChar = () => {
+    setSubmitLoading(true);
+    (async () => {
+      // console.log(currentChar);
+      const ans = {
+        dataSetId: systemInfo.dataSetId,
+        currentImageId: systemInfo.currentImageId,
+        author: systemInfo.author,
+        charId: currentChar.id,
+        charName: currentChar.name,
+        result
+      }
+      const reqResult = await axios.post('http://localhost:4000/api/submit', ans);
+      console.log(reqResult.data);
+      (reqResult.data === "success") && setSubmitSuccess(() => true);
+      setSubmitLoading(false);
+    })();
+  }
 
   return (
     <Wrapper>
       <LeftWrapper>
-        <Strokes>
-          <Radio.Group value={currentStroke.src.id} size="large" buttonStyle="solid">
-            {
-              strokesData.strokes.map((item) => {
-                return (
-                  <Radio.Button key={`stroke_${item.id}`} value={item.id} 
-                    onClick={() => message.warning("目前不允许修改笔顺，请修改配置文件适配")}
-                  >
-                    { item.name }
-                  </Radio.Button>
-                )
-              })
-            }
-          </Radio.Group>
-        </Strokes>
+        <StrokeNameList>
+          <span style={{ fontSize: "25px", margin: "10px" }}>笔画列表（自动选择）</span>
+          {
+            strokeListLoading ? (
+              <Spin tip="Loading...">
+                <Alert
+                  message="strokeList"
+                  description="strokeList strokeList strokeList strokeList strokeList strokeList "
+                  type="info"
+                />
+              </Spin>
+            ) : (
+              <Radio.Group 
+                style={{margin: "17px" }}
+                value={strokeList[strokeIndex-1]} size="large" buttonStyle="solid">
+                {
+                  strokesData.strokes.map((item) => {
+                    return (
+                      <Radio.Button key={`stroke_${item.id}`} value={item.id} 
+                        onClick={() => message.warning("目前不允许修改笔顺，请修改配置文件适配")}
+                      >
+                        { item.name }
+                      </Radio.Button>
+                    )
+                  })
+                }
+              </Radio.Group>
+            )
+          }
+        </StrokeNameList>
         <StrokeShow>
-          { DescriptionArea(currentStroke) } 
+          { 
+            currentCharLoading ? (
+              <Spin tip="Loading...">
+                <Alert
+                  message="currentChar"
+                  description="currentChar currentChar currentChar currentChar currentChar currentChar "
+                  type="info"
+                />
+              </Spin>
+            ) : (
+              DescriptionArea(currentStroke, tempPoints.length)
+            )
+          } 
         </StrokeShow >
       </LeftWrapper>
       <RightWrapper>
-        <DataSetTitle>
-          <TitleWrapper>
-            <TitleTextSpan>数据集：{currentImageInfo.dataSetId}号</TitleTextSpan>
-            <Input 
-              style={{ width: '40%' }} 
-              size="large" 
-              placeholder="记录人" 
-              prefix={<UserOutlined />} 
-              value={currentImageInfo.author} 
-              onChange={e => setInfo({
-                  id: currentImageInfo.id,
-                  dataSetId: currentImageInfo.dataSetId,
-                  author: e.target.value
-                })
-              }
-            />
-          </TitleWrapper>
-          
-          <TitleTextSpan2><Badge status="processing" />进度：[1/100]</TitleTextSpan2>
-        </DataSetTitle>
+            {
+              sysInfoLoading && currentCharLoading ? (
+              <Spin tip="Loading...">
+                <Alert
+                  message="sysInfo, currentChar"
+                  description=" "
+                  type="info"
+                />
+              </Spin>
+              ) : (
+                <DataSetTitle>
+                  <TitleWrapper>
+                    <TitleTextSpan>
+                      数据集：{systemInfo.dataSetId}号
+                      {/* <span style={{fontSize: "20px", color: "#909090"}}>     进度：[{systemInfo.currentImageId}/{systemInfo.total}]</span> */}
+                    </TitleTextSpan>
+                    <Input 
+                      style={{ width: '40%' }} 
+                      size="large" 
+                      placeholder="记录人" 
+                      prefix={<UserOutlined />} 
+                      value={systemInfo.author} 
+                      onChange={e => setSystemInfo({
+                          id: systemInfo.id,
+                          dataSetId: systemInfo.dataSetId,
+                          author: e.target.value
+                        })
+                      }
+                    />
+                  </TitleWrapper>
+                  <TitleTextSpan2><Badge status="processing" />当前字："{currentChar.name}"，进度：{systemInfo.currentImageId}/{systemInfo.total}</TitleTextSpan2>
+                </DataSetTitle>
+              )
+            }
         <CharacterWrapper>
           <FunctionWrapper>
             <span>请在红框内进行标记</span>
             <Character>
-              <img 
-                style={{
-                  left: "0px",
-                  position: "absolute"
-                }}
-                src={`/assets/source/${currentImageInfo.dataSetId}/${ImagesUrls[currentImageInfo.id]}`}
-              >
-              </img>
+              {
+                sysInfoLoading ? (
+                <Spin tip="Loading...">
+                  <Alert
+                    message="sysInfo"
+                    description="sysInfo sysInfo sysInfo sysInfo "
+                    type="info"
+                  />
+                </Spin>
+                ) : (
+                  <img 
+                    style={{
+                      left: "0px",
+                      position: "absolute"
+                    }}
+                    src={`/assets/source/${systemInfo.dataSetId}/${imagesUrls[systemInfo.currentImageId]}`}
+                  >
+                  </img>
+                )
+              }
+
               <canvas
                 width="256px"
                 height="256px"
@@ -348,23 +394,75 @@ const App = () => {
               </canvas>
             </Character>
             <ButtonWrapper>
-              <Button size="large" type="primary" onClick={canvasClear}> 清空关键点（Z）</Button>
-              <Button size="large" type="primary" >重新开始本字（X）</Button>
-              <Button size="large" type="primary" onClick={nextStroke}>下一个笔画（C）</Button>
-              <Button size="large" type="primary" onClick={submitStroke}>提交本字（V）</Button>
-              <Button size="large" type="primary">本字难以辨认，跳过（H）</Button>
+              <Button 
+                size="large" 
+                type="primary" 
+                onClick={(currentStroke) => nextStroke(currentStroke)}
+                disabled={tempPoints.length !== currentStroke.strokeOrderLength}
+              >下一个笔画（C）</Button>
+              <Button size="large" onClick={canvasClear}> 清空该笔画关键点（Z）</Button>
+              <Button size="large" danger onClick={reStartChar}>重新开始本字（X）</Button>
+              <Button size="large" type="dashed" danger>本字难以辨认，跳过（H）</Button>
             </ButtonWrapper>
           </FunctionWrapper>
           <HistoryWrapper>
             <ContextRegularSpan
               style={{
                 margin: 10,
-                borderBottom: '1px solid black'
+                borderBottom: '2px solid black'
               }}
             >
               输出结果<br></br>
             </ContextRegularSpan>
-            { ResultResponse(1) }
+            <div style={{ overflow: "scroll", height: "340px", width: "100%"}}>
+            { 
+              strokeListLoading ? (
+                <Spin tip="strokeList">
+                </Spin>
+              ) : (
+                  result.map((item, index) => {
+                    console.log(item);
+                    return (
+                        <div key={index} style={{ fontSize: "18px", display: "flex", flexDirection: "column", alignItems: "center" }}> 
+                          <span>
+                            ({index + 1}) {item.name}
+                          </span>
+                          <span
+                            style={{
+                              margin: 5,
+                              borderBottom: '1px solid gray'
+                            }}
+                          >
+                            <div 
+                              // style={{ fontSize: "18px", display: "flex", flexDirection: "column", alignItems: "center" }}
+                            >
+                              {
+                                item.record.map((item2, index2) => {
+                                  return (
+                                    <span key={index2}> ({item2[0]}, {item2[1]})</span>
+                                  )
+                                })
+                              }
+                            </div>
+                          </span>
+                        </div>
+                    )
+                  })
+              )
+            }
+            </div>
+            <div>
+              <Progress style={{margin: "10px"}} type="circle" status={ submitSuccess ? null : "active"} percent={
+                strokeCompleted ? 100 : (((strokeIndex-1)/strokeList.length)*100)
+              } width={80} />
+              { submitLoading ? (<Spin />) : null }
+            </div>
+            <Button 
+              // style={{margin: "10px"}} 
+              size="large" type="primary" 
+              onClick={submitChar} 
+              disabled={!strokeCompleted}
+            >提交本字（V）</Button>
           </HistoryWrapper>
         </CharacterWrapper>
       </RightWrapper>

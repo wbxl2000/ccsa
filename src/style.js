@@ -18,7 +18,7 @@ export const Wrapper = styled.div`
 
 // 左侧
 export const LeftWrapper = styled.div`
-  width: 800px;
+  width: 750px;
   height: 750px;
   border-right: 2px solid gray;
   padding-right: 5px;
@@ -27,7 +27,7 @@ export const LeftWrapper = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   align-items: flex-start;
-
+  justify-content: center;
 `;
 
 // 右侧大的组件
@@ -55,25 +55,27 @@ export const StrokeShow = styled.div`
   }
 `;
 
-export const Strokes = styled.div`
+export const StrokeNameList = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  margin-left: 20px;
-  margin-top: 30px;
+  margin-top: 10px;
   border-bottom: #C0C0C0;
+  width: 650px;
+  border: 1px solid black;
+  border-radius: 10px;
+  border-bottom: 1px solid white;
 `;
 
 export const CharacterWrapper = styled.div`
-  width: 600px;
+  width: 650px;
   height: 600px;
   border: 1px solid black;
   border-radius: 10px;
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: center;
 `;
 
 export const FunctionWrapper = styled.div`
@@ -82,11 +84,13 @@ export const FunctionWrapper = styled.div`
 `;
 
 export const HistoryWrapper = styled.div`
-  margin-left: 20px;
-  width: 200px;
-  height: 500px;
+  margin: 20px;
+  width: 250px;
   border: 1px solid gray;
-
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 export const Character = styled.div`
@@ -144,6 +148,7 @@ export const TitleTextSpan = styled.span`
   font-size: 25px;
 `;
 
+
 export const TitleTextSpan2 = styled.span`
   font-size: 20px;
 `;
@@ -169,7 +174,7 @@ export const TitleWrapper = styled.div`
 export const DataSetTitle = styled.div`
   margin-top: 20px;
   height: auto;
-  width: 600px;
+  width: 648px;
 `;
 
 export const Canvas = styled.canvas`
