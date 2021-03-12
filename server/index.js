@@ -57,6 +57,7 @@ app.post('/api/submit', (req, res) => {
       };
       const newData = JSON.parse(data.toString());
       newData.currentImageId = req.body.currentImageId + 1;
+      newData.author = req.body.author;
       const writeData = fs.writeFile(`${__dirname}\\src\\config\\system-info.json`, JSON.stringify(newData), (err, result) => {  // WRITE
           if (err) {
             res.end("error"+ err);

@@ -114,6 +114,7 @@ const App = () => {
   const [ systemInfo, setSystemInfo ] = useState({});
   const [ result, setResult ] = useState([]);
   const [ tempPoints, addPoints ] = useState([]);
+  const [ currentAuthor, setCurrentAuthor ] = useState([]);
 
   // Loading
   const [ sysInfoLoading, setSysInfoLoading ] = useState(true);
@@ -145,6 +146,7 @@ const App = () => {
       setStrokeIndex(() => 1);
       setStrokeCompleted(() => false);
       setResult(() => []);
+      setCurrentAuthor(() => systemInfo.author);
     })();
   }, [ sysInfoLoading, systemInfo ]);
     // 如果获取了字的信息，那么更新笔画的信息
@@ -240,7 +242,7 @@ const App = () => {
       const ans = {
         dataSetId: systemInfo.dataSetId,
         currentImageId: systemInfo.currentImageId,
-        author: systemInfo.author,
+        author: currentAuthor,
         charId: currentChar.id,
         charName: currentChar.name,
         result
@@ -323,13 +325,8 @@ const App = () => {
                       size="large" 
                       placeholder="记录人" 
                       prefix={<UserOutlined />} 
-                      value={systemInfo.author} 
-                      onChange={e => setSystemInfo({
-                          id: systemInfo.id,
-                          dataSetId: systemInfo.dataSetId,
-                          author: e.target.value
-                        })
-                      }
+                      value={currentAuthor} 
+                      onChange={e => setCurrentAuthor(() => e.target.value)}
                     />
                   </TitleWrapper>
                   <TitleTextSpan2><Badge status="processing" />当前字："{currentChar.name}"，进度：{systemInfo.currentImageId}/{systemInfo.total}</TitleTextSpan2>
