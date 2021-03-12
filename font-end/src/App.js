@@ -16,9 +16,7 @@ import {
   HistoryWrapper,
   Character,
   ButtonWrapper,
-  StrokePicture,
   StrokeNameList,
-  CurrentStrokeWrapper,
   TitleTextSpan,
   ContextRegularSpan,
   ImageContainer,
@@ -33,17 +31,6 @@ import {
 import { Button, Radio, Progress, Image, Descriptions, Badge, message, Input, Spin, Alert } from 'antd';
 
 import { UserOutlined } from '@ant-design/icons';
-
-function difference(object, base) {
-  function changes(object, base) {
-      return _.transform(object, function(result, value, key) {
-          if (!_.isEqual(value, base[key])) {
-              result[key] = (_.isObject(value) && _.isObject(base[key])) ? changes(value, base[key]) : value;
-          }
-      });
-  }
-  return changes(object, base);
-}
 
 const RegisterListener = () => {
     document.addEventListener("keydown", (e) => {
