@@ -1,10 +1,13 @@
 const express = require('express');
 const fs = require('fs');
+var path = require('path');
 
 const port = 4000;
 const app = express();
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../font-end/build')));
 
 app.all('*', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -15,50 +18,46 @@ app.all('*', function(req, res, next) {
   next();
 });
 
-// app.use(express.static('public'));
-
+app.get('/', function(req, res) {
+  res.sendFile(path.join(__dirname, '../font-end/build', 'index.html'));
+});
 
 app.get('/api/system-info', (req, res) => {
-  const systemInfo = JSON.parse(fs.readFileSync(__dirname + '\\public\\config\\system-info.json'));
+  const systemInfo = JSON.parse(fs.readFileSync(__dirname + '\\src\\config\\system-info.json'));
   res.json(systemInfo);
 });
 
 app.get('/api/strokes-list', (req, res) => {
-  const { characters } = JSON.parse(fs.readFileSync(__dirname + '\\public\\config\\strokes-list.json'));
+  const { characters } = JSON.parse(fs.readFileSync(__dirname + '\\src\\config\\strokes-list.json'));
   const { id } = req.query;
-  console.log(id);
-  console.log(characters);
   const char = characters.find((item) => {
-    console.log(typeof item.cId, typeof id)
     return (item.cId.toString() === id)
   });
-  console.log(char);
   res.json(char.strokes);
 });
 
+
 app.get('/api/character-info', (req, res) => {
   const { id } = req.query;
-  const { images } = JSON.parse(fs.readFileSync(__dirname + '\\public\\config\\images.json'));
-  console.log(typeof images, images);
+  const { images } = JSON.parse(fs.readFileSync(__dirname + '\\src\\config\\images.json'));
   const img = images.find((item) => {
     return (item.id.toString() === id)
   });
-  console.log(img);
   res.json(img);
 });
 
-app.post('/api/submit', (req, res) => {
-  console.log(req.body);
 
+
+app.post('/api/submit', (req, res) => {
   const nextImage = () => {
-    fs.readFile(`${__dirname}\\public\\config\\system-info.json`, (err, data) => {  // READ
+    fs.readFile(`${__dirname}\\src\\config\\system-info.json`, (err, data) => {  // READ
       if (err) {
           res.end("error"+ err);
           return console.error(err);
       };
       const newData = JSON.parse(data.toString());
       newData.currentImageId = req.body.currentImageId + 1;
-      const writeData = fs.writeFile(`${__dirname}\\public\\config\\system-info.json`, JSON.stringify(newData), (err, result) => {  // WRITE
+      const writeData = fs.writeFile(`${__dirname}\\src\\config\\system-info.json`, JSON.stringify(newData), (err, result) => {  // WRITE
           if (err) {
             res.end("error"+ err);
             return console.error(err);
@@ -68,7 +67,6 @@ app.post('/api/submit', (req, res) => {
       });
     });    
   }
-
   fs.readFile(`${__dirname}\\result\\data.json`, (err, data) => {  // READ
     if (err) {
         res.end("error"+ err);
@@ -87,6 +85,10 @@ app.post('/api/submit', (req, res) => {
   });
 })
 
+
+
+
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 });
+

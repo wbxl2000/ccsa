@@ -177,14 +177,6 @@ export const DataSetTitle = styled.div`
   width: 648px;
 `;
 
-export const Canvas = styled.canvas`
-  border: 1px solid red;
-  width: 256px;
-  height: 256px;
-  left: 0px;
-  top: 0px;
-  position: absolute;
-`;
 // 是否已经标注
 // 撤销笔画
 // 跳转到哪一个字（记录个人标注的进度）+ 30/111

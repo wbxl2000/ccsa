@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import _ from 'lodash';
 import './App.css';
 
 import strokesData from './config/strokes-detail.json';
@@ -22,8 +21,7 @@ import {
   ImageContainer,
   TitleWrapper,
   DataSetTitle,
-  TitleTextSpan2,
-  Canvas
+  TitleTextSpan2
 } from './style';
 
 // import StrokePicker from './components/stroke-picker';
@@ -102,15 +100,6 @@ const getMapImageUrls = () => {
     return res;
 }
 
-const getMapImageCIds = () => {
-  // console.log("getMapImageCIds");
-  const res = {};
-  images.forEach((image) => {
-    res[image.id] = image.c_id;
-  });
-  return res;
-}
-
 const App = () => {
   // useRef Hooks
   const canvasRef = useRef(null);
@@ -177,7 +166,7 @@ const App = () => {
     if (strokeListLoading) return;
     setCurrentStroke(() => strokesData.strokes[strokeList[strokeIndex-1]-1]);
     addPoints(() => []);
-  }, [ strokeListLoading, strokeIndex ]);
+  }, [ strokeListLoading, strokeIndex, strokeList ]);
 
 
   useEffect(() => RegisterListener, []);
@@ -362,6 +351,7 @@ const App = () => {
                 </Spin>
                 ) : (
                   <img 
+                    alt=""
                     style={{
                       left: "0px",
                       position: "absolute"
