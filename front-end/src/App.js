@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { useHotkeys } from 'react-hotkeys-hook';
 import './App.css';
 
 import strokesData from './config/strokes-detail.json';
@@ -112,7 +113,7 @@ const App = () => {
     if (strokeListLoading) return;
     // console.log("who" + strokeList[strokeIndex-1]);
     // console.log(strokesData);
-    console.log(strokesData.strokes.find(stroke => stroke.id === strokeList[strokeIndex-1]));
+    // console.log(strokesData.strokes.find(stroke => stroke.id === strokeList[strokeIndex-1]));
     setCurrentStroke(() => strokesData.strokes.find(stroke => stroke.id === strokeList[strokeIndex-1]));
     addPoints(() => []);
   }, [ strokeListLoading, strokeIndex, strokeList ]);
@@ -143,7 +144,7 @@ const App = () => {
   }
 
   const canvasClear = () => {
-    console.log("qingkong");
+    // console.log("qingkong");
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, 256, 256);
@@ -204,6 +205,12 @@ const App = () => {
       setSubmitLoading(false);
     })();
   };
+
+  useHotkeys('c', () => nextStroke(), {}, [ strokeCompleted, tempPoints, currentStroke, result, strokeList, strokeIndex ]);
+  useHotkeys('z', () => canvasClear());
+  useHotkeys('x', () => reStartChar());
+  useHotkeys('h', () => submitChar(true), {}, [ strokeCompleted, systemInfo, currentChar, currentAuthor ]);
+  
 
   return (
     <Wrapper>
@@ -422,36 +429,3 @@ const App = () => {
 }
 
 export default App;
-
-
-
-
-  // const keyAction = useCallback(
-  //   (e) => {
-  //     switch (e.code) {
-  //       case "KeyC":
-  //         nextStroke();
-  //         break;
-  //       case "KeyZ":
-  //         // canvasClear();
-  //         break;
-  //       case "KeyX":
-  //         // reStartChar();
-  //         break;
-  //       case "KeyV":
-  //         // submitChar();
-  //         break;
-  //       case "KeyV":
-  //         console.log("V");
-  //         break;
-  //       default: 
-  //         break;
-  //     }
-  //   }, [ nextStroke ]);
-
-  // useEffect(() => {
-  //   window.addEventListener("keydown", keyAction);
-  //   return () => {
-  //     document.removeEventListener("keydown", keyAction);
-  //   }
-  // }, [ keyAction ]);

@@ -29,6 +29,7 @@ app.get('/api/system-info', (req, res) => {
 
 app.get('/api/strokes-list', (req, res) => {
   const { characters } = JSON.parse(fs.readFileSync(__dirname + '\\src\\config\\strokes-list.json'));
+  if (!characters) res.end();
   const { id } = req.query;
   const char = characters.find((item) => {
     return (item.cId.toString() === id)
@@ -73,6 +74,7 @@ app.post('/api/submit', (req, res) => {
         res.end("error"+ err);
         return console.error(err);
     };
+    console.log(data);
     const newData = JSON.parse(data.toString());
     newData.content.push(req.body);
     const writeData = fs.writeFile(`${__dirname}\\result\\data.json`, JSON.stringify(newData), (err, result) => {  // WRITE
