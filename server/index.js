@@ -7,7 +7,7 @@ const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../font-end/build')));
+app.use(express.static(path.join(__dirname, '../front-end/build')));
 
 app.all('*', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -19,7 +19,7 @@ app.all('*', function(req, res, next) {
 });
 
 app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname, '../font-end/build', 'index.html'));
+  res.sendFile(path.join(__dirname, '../front-end/build', 'index.html'));
 });
 
 app.get('/api/system-info', (req, res) => {

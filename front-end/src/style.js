@@ -24,10 +24,10 @@ export const LeftWrapper = styled.div`
   padding-right: 5px;
   /* border-radius: 20px; */
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: center;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 // 右侧大的组件
@@ -43,9 +43,10 @@ export const RightWrapper = styled.div`
 `;
 
 export const StrokeShow = styled.div`
-  margin: 0 20px;
   /* border: 1px solid red; */
   /* border-top: 1px solid #C0C0C0; */
+  /* height: 630px; */
+  margin-bottom: 27px;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -161,8 +162,11 @@ export const ContextRegularSpan = styled.span`
 
 export const ImageContainer = styled.div`
   width: 140px;
-  height: 140px;
+  height: auto;
   border: 1px solid #1890FF;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 export const TitleWrapper = styled.div`

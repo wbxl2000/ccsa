@@ -30,27 +30,6 @@ import { Button, Radio, Progress, Image, Descriptions, Badge, message, Input, Sp
 
 import { UserOutlined } from '@ant-design/icons';
 
-const RegisterListener = () => {
-    document.addEventListener("keydown", (e) => {
-      switch (e.code) {
-        case "KeyZ":
-          console.log("Z");
-          break;
-        case "KeyX":
-          console.log("X");
-          break;
-        case "KeyC":
-          console.log("C");
-          break;
-        case "KeyV":
-          console.log("V");
-          break;
-        default: 
-          break;
-      }
-    })
-}
-
 const TextRegular = (text) => {
   return (
     <ContextRegularSpan>{text}</ContextRegularSpan>
@@ -60,9 +39,10 @@ const TextRegular = (text) => {
 
 const DescriptionArea = (currentStroke, tempPointsLength) => {
   const length = currentStroke.strokeOrderLength;
+  // console.log(currentStroke);
   return (
     <Descriptions 
-      style={{ width: "650px", padding: "20px", 
+      style={{ height: "auto", width: "650px", padding: "20px", 
         border: "1px solid black",
         borderRadius: "10px",
         borderTop: "1px solid white"}}
@@ -103,6 +83,7 @@ const getMapImageUrls = () => {
 const App = () => {
   // useRef Hooks
   const canvasRef = useRef(null);
+  const nextStrokeRef = useRef(null);
   
   // useState Hooks
   const [ currentStroke, setCurrentStroke ] = useState({});
@@ -166,13 +147,45 @@ const App = () => {
     // 笔画进度一旦修改，那么当前笔画一定要更新，缓存数据要清零
   useEffect(() => {
     if (strokeListLoading) return;
-    setCurrentStroke(() => strokesData.strokes[strokeList[strokeIndex-1]-1]);
+    console.log("who" + strokeList[strokeIndex-1]);
+    console.log(strokesData);
+    setCurrentStroke(() => strokesData.strokes.find(stroke => stroke.id === strokeList[strokeIndex-1]));
     addPoints(() => []);
-  }, [ strokeListLoading, strokeIndex, strokeList ]);
+  }, [ strokesData, strokeListLoading, strokeIndex, strokeList ]);
 
 
-  useEffect(() => RegisterListener, []);
+  // useEffect(() => {
+  //   function keyAction(e) {
+  //     switch (e.code) {
+  //       case "KeyC":
+  //         nextStrokeRef.onClick();
+  //         break;
+  //       case "KeyZ":
+  //         canvasClear();
+  //         break;
+  //       case "KeyX":
+  //         reStartChar();
+  //         break;
+  //       case "KeyV":
+  //         submitChar();
+  //         break;
+  //       case "KeyV":
+  //         console.log("V");
+  //         break;
+  //       default: 
+  //         break;
+  //     }
+  //   }
+
+  //   document.addEventListener("keydown", (e) => keyAction(e));
+
+  //   return () => {
+  //     document.removeEventListener("keydown", (e) => keyAction(e));
+  //   }
+  // }, [ ]);
+
   useEffect(() => mapUrls(getMapImageUrls), []);
+
   // useEffect(() => {
   //   if (tempPoints.length === currentStroke.strokeOrderLength) {
   //     message.success('此笔画已完成，按下快捷键「C」进入下一个笔画');
@@ -196,7 +209,7 @@ const App = () => {
     ctx.strokeStyle = "magenta";
     ctx.fillStyle = "magenta";
     ctx.stroke();
-    console.log(tempPoints);
+    // console.log(tempPoints);
     addPoints(() => {
       return [...tempPoints, [x, y]];
     });
@@ -207,18 +220,23 @@ const App = () => {
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, 256, 256);
     addPoints(() => []);
-  }
+  };
 
   const nextStroke = () => {
     if (strokeCompleted) {
       message.warning("已经录入完成所有笔画，请进入下一个字");
       return;
     }
+    // console.log(tempPoints.length, currentStroke.strokeOrderLength);
+    if (tempPoints.length !== currentStroke.strokeOrderLength) {
+      message.warning("关键点录入未完成");
+      return;
+    }
     const thisStroke = {
       id: currentStroke.id,
       name: currentStroke.name,
       record: tempPoints
-    } 
+    }
     canvasClear();
     setResult(() => [...result, thisStroke]);
     if (strokeIndex < strokeList.length) {
@@ -226,16 +244,20 @@ const App = () => {
     } else {
       setStrokeCompleted(true);
     }
-  }
+  };
 
   const reStartChar = () => {
     canvasClear();
     setResult(() => []);
     setStrokeCompleted(() => false);
     setStrokeIndex(() => 1);
-  }
+  };
 
-  const submitChar = () => {
+  const submitChar = (skip) => {
+    if (!strokeCompleted && !skip) {
+      message.warning("笔画数量未达到预设标准");
+      return;
+    }
     setSubmitLoading(true);
     (async () => {
       // console.log(currentChar);
@@ -244,15 +266,16 @@ const App = () => {
         currentImageId: systemInfo.currentImageId,
         author: currentAuthor,
         charId: currentChar.id,
+        skip,
         charName: currentChar.name,
         result
       }
       const reqResult = await axios.post('http://localhost:4000/api/submit', ans);
-      console.log(reqResult.data);
+      // console.log(reqResult.data);
       (reqResult.data === "success") && setSubmitSuccess(() => true);
       setSubmitLoading(false);
     })();
-  }
+  };
 
   return (
     <Wrapper>
@@ -371,12 +394,13 @@ const App = () => {
               <Button 
                 size="large" 
                 type="primary" 
+                ref={nextStrokeRef}
                 onClick={(currentStroke) => nextStroke(currentStroke)}
                 disabled={tempPoints.length !== currentStroke.strokeOrderLength}
               >下一个笔画（C）</Button>
-              <Button size="large" onClick={canvasClear}> 清空该笔画关键点（Z）</Button>
-              <Button size="large" danger onClick={reStartChar}>重新开始本字（X）</Button>
-              <Button size="large" type="dashed" danger>本字难以辨认，跳过（H）</Button>
+              <Button size="large" onClick={() => canvasClear}> 清空该笔画关键点（Z）</Button>
+              <Button size="large" danger onClick={() => reStartChar}>重新开始本字（X）</Button>
+              <Button size="large" type="dashed" danger onClick={() => submitChar(true)}>本字难以辨认，跳过（H）</Button>
             </ButtonWrapper>
           </FunctionWrapper>
           <HistoryWrapper>
@@ -395,7 +419,7 @@ const App = () => {
                 </Spin>
               ) : (
                   result.map((item, index) => {
-                    console.log(item);
+                    // console.log(item);
                     return (
                         <div key={index} style={{ fontSize: "18px", display: "flex", flexDirection: "column", alignItems: "center" }}> 
                           <span>
@@ -434,7 +458,7 @@ const App = () => {
             <Button 
               // style={{margin: "10px"}} 
               size="large" type="primary" 
-              onClick={submitChar} 
+              onClick={() => submitChar(false)} 
               disabled={!strokeCompleted}
             >提交本字（V）</Button>
           </HistoryWrapper>

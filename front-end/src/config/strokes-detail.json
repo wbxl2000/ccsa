@@ -65,17 +65,10 @@
         },
         {
             "id": 10,
-            "name": "横撇",
-            "exampleUrl": "stroke-10.png",
+            "name": "横撇/横钩",
+            "exampleUrl": "stroke-1011.png",
             "strokeOrderLength": 3,
-            "strokeOrderImageUrl": "stroke-10.png"
-        },
-        {
-            "id": 11,
-            "name": "横沟",
-            "exampleUrl": "stroke-11.png",
-            "strokeOrderLength": 3,
-            "strokeOrderImageUrl": "stroke-11.png"
+            "strokeOrderImageUrl": "stroke-1011.png"
         },
         {
             "id": 12,
@@ -86,7 +79,7 @@
         },
         {
             "id": 13,
-            "name": "捺折",
+            "name": "撇折",
             "exampleUrl": "stroke-13.png",
             "strokeOrderLength": 3,
             "strokeOrderImageUrl": "stroke-13.png"
@@ -100,10 +93,10 @@
         },
         {
             "id": 15,
-            "name": "竖折",
-            "exampleUrl": "stroke-15.png",
+            "name": "竖折/竖弯",
+            "exampleUrl": "stroke-1523.png",
             "strokeOrderLength": 3,
-            "strokeOrderImageUrl": "stroke-15.png"
+            "strokeOrderImageUrl": "stroke-1523.png"
         },
         {
             "id": 16,
@@ -153,13 +146,6 @@
             "exampleUrl": "stroke-22.png",
             "strokeOrderLength": 5,
             "strokeOrderImageUrl": "stroke-22.png"
-        },
-        {
-            "id": 23,
-            "name": "竖弯",
-            "exampleUrl": "stroke-23.png",
-            "strokeOrderLength": 3,
-            "strokeOrderImageUrl": "stroke-23.png"
         },
         {
             "id": 24,
