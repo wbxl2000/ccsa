@@ -146,7 +146,7 @@ export const CurrentStrokeWrapper = styled.div`
 `;
 
 export const TitleTextSpan = styled.span`
-  font-size: 25px;
+  font-size: 22px;
 `;
 
 
@@ -155,7 +155,7 @@ export const TitleTextSpan2 = styled.span`
 `;
 
 export const ContextRegularSpan = styled.span`
-  font-size: 20px;
+  font-size: 18px;
   font-weight: normal;
 `;
 
@@ -173,6 +173,8 @@ export const TitleWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
 `;
 
 export const DataSetTitle = styled.div`

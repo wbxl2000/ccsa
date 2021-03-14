@@ -143,6 +143,7 @@ const App = () => {
   }
 
   const canvasClear = () => {
+    console.log("qingkong");
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, 256, 256);
@@ -257,7 +258,6 @@ const App = () => {
                   <TitleWrapper>
                     <TitleTextSpan>当前笔画信息：{`${currentStroke.id} - ${currentStroke.name}`} </TitleTextSpan>
                     <div>
-                      {/* <Badge status={tempPoints.length === currentStroke.strokeOrderLength ? "success" : "processing"}></Badge> */}
                       {TextRegular(`关键点标记进度[${tempPoints.length}/${currentStroke.strokeOrderLength}]: `)}
                       <Progress percent={(tempPoints.length/currentStroke.strokeOrderLength)*100} steps={currentStroke.strokeOrderLength} showInfo={false}/>
                     </div>
@@ -351,8 +351,8 @@ const App = () => {
                 onClick={() => nextStroke()}
                 disabled={tempPoints.length !== currentStroke.strokeOrderLength}
               >下一个笔画（C）</Button>
-              <Button size="large" onClick={() => canvasClear}> 清空该笔画关键点（Z）</Button>
-              <Button size="large" danger onClick={() => reStartChar}>重新开始本字（X）</Button>
+              <Button size="large" onClick={canvasClear}> 清空该笔画关键点（Z）</Button>
+              <Button size="large" danger onClick={reStartChar}>重新开始本字（X）</Button>
               <Button size="large" type="dashed" danger onClick={() => submitChar(true)}>本字难以辨认，跳过（H）</Button>
             </ButtonWrapper>
           </FunctionWrapper>
