@@ -36,42 +36,6 @@ const TextRegular = (text) => {
   )
 }
 
-
-const DescriptionArea = (currentStroke, tempPointsLength) => {
-  const length = currentStroke.strokeOrderLength;
-  // console.log(currentStroke);
-  return (
-    <Descriptions 
-      style={{ height: "auto", width: "650px", padding: "20px", 
-        border: "1px solid black",
-        borderRadius: "10px",
-        borderTop: "1px solid white"}}
-      title={
-        <TitleWrapper>
-          <TitleTextSpan>当前笔画信息：{`${currentStroke.id} - ${currentStroke.name}`} </TitleTextSpan>
-          <div>
-            {/* <Badge status={tempPointsLength === length ? "success" : "processing"}></Badge> */}
-            {TextRegular(`关键点标记进度[${tempPointsLength}/${length}]: `)}
-            <Progress percent={(tempPointsLength/length)*100} steps={length} showInfo={false}/>
-          </div>
-        </TitleWrapper>
-      } 
-      bordered
-    >
-      <Descriptions.Item label={TextRegular('笔画示意图')}>
-        <ImageContainer>
-          <Image src={`/assets/stroke-example/${currentStroke.strokeOrderImageUrl}`} />
-        </ImageContainer>
-      </Descriptions.Item>
-      <Descriptions.Item label={TextRegular('节点分布图')} span={2}>
-        <ImageContainer>
-          <Image src={`/assets/stroke-order/${currentStroke.strokeOrderImageUrl}`} />
-        </ImageContainer>
-      </Descriptions.Item>
-    </Descriptions>
-  )
-};
-
 const getMapImageUrls = () => {
     const res = {};
     images.forEach((image) => {
@@ -83,7 +47,6 @@ const getMapImageUrls = () => {
 const App = () => {
   // useRef Hooks
   const canvasRef = useRef(null);
-  const nextStrokeRef = useRef(null);
   
   // useState Hooks
   const [ currentStroke, setCurrentStroke ] = useState({});
@@ -147,51 +110,15 @@ const App = () => {
     // 笔画进度一旦修改，那么当前笔画一定要更新，缓存数据要清零
   useEffect(() => {
     if (strokeListLoading) return;
-    console.log("who" + strokeList[strokeIndex-1]);
-    console.log(strokesData);
+    // console.log("who" + strokeList[strokeIndex-1]);
+    // console.log(strokesData);
+    console.log(strokesData.strokes.find(stroke => stroke.id === strokeList[strokeIndex-1]));
     setCurrentStroke(() => strokesData.strokes.find(stroke => stroke.id === strokeList[strokeIndex-1]));
     addPoints(() => []);
-  }, [ strokesData, strokeListLoading, strokeIndex, strokeList ]);
+  }, [ strokeListLoading, strokeIndex, strokeList ]);
 
-
-  // useEffect(() => {
-  //   function keyAction(e) {
-  //     switch (e.code) {
-  //       case "KeyC":
-  //         nextStrokeRef.onClick();
-  //         break;
-  //       case "KeyZ":
-  //         canvasClear();
-  //         break;
-  //       case "KeyX":
-  //         reStartChar();
-  //         break;
-  //       case "KeyV":
-  //         submitChar();
-  //         break;
-  //       case "KeyV":
-  //         console.log("V");
-  //         break;
-  //       default: 
-  //         break;
-  //     }
-  //   }
-
-  //   document.addEventListener("keydown", (e) => keyAction(e));
-
-  //   return () => {
-  //     document.removeEventListener("keydown", (e) => keyAction(e));
-  //   }
-  // }, [ ]);
 
   useEffect(() => mapUrls(getMapImageUrls), []);
-
-  // useEffect(() => {
-  //   if (tempPoints.length === currentStroke.strokeOrderLength) {
-  //     message.success('此笔画已完成，按下快捷键「C」进入下一个笔画');
-  //     return;
-  //   }
-  // }, [ tempPoints ]);
 
   const Paint = (e) => { // 每次点击canvas
     // console.log(tempPoints.length, currentStroke.strokeOrderLength);
@@ -223,11 +150,11 @@ const App = () => {
   };
 
   const nextStroke = () => {
+    // console.log(tempPoints.length, currentStroke.strokeOrderLength);
     if (strokeCompleted) {
       message.warning("已经录入完成所有笔画，请进入下一个字");
       return;
     }
-    // console.log(tempPoints.length, currentStroke.strokeOrderLength);
     if (tempPoints.length !== currentStroke.strokeOrderLength) {
       message.warning("关键点录入未完成");
       return;
@@ -316,12 +243,39 @@ const App = () => {
               <Spin tip="Loading...">
                 <Alert
                   message="currentChar"
-                  description="currentChar currentChar currentChar currentChar currentChar currentChar "
+                  description="currentChar currentChar currentChar currentChar currentChar currentChar"
                   type="info"
                 />
               </Spin>
             ) : (
-              DescriptionArea(currentStroke, tempPoints.length)
+              <Descriptions 
+                style={{ height: "auto", width: "650px", padding: "20px", 
+                  border: "1px solid black",
+                  borderRadius: "10px",
+                  borderTop: "1px solid white"}}
+                title={
+                  <TitleWrapper>
+                    <TitleTextSpan>当前笔画信息：{`${currentStroke.id} - ${currentStroke.name}`} </TitleTextSpan>
+                    <div>
+                      {/* <Badge status={tempPoints.length === currentStroke.strokeOrderLength ? "success" : "processing"}></Badge> */}
+                      {TextRegular(`关键点标记进度[${tempPoints.length}/${currentStroke.strokeOrderLength}]: `)}
+                      <Progress percent={(tempPoints.length/currentStroke.strokeOrderLength)*100} steps={currentStroke.strokeOrderLength} showInfo={false}/>
+                    </div>
+                  </TitleWrapper>
+                } 
+                bordered
+              >
+                <Descriptions.Item label={TextRegular('笔画示意图')}>
+                  <ImageContainer>
+                    <Image src={`/assets/stroke-example/${currentStroke.strokeOrderImageUrl}`} />
+                  </ImageContainer>
+                </Descriptions.Item>
+                <Descriptions.Item label={TextRegular('节点分布图')} span={2}>
+                  <ImageContainer>
+                    <Image src={`/assets/stroke-order/${currentStroke.strokeOrderImageUrl}`} />
+                  </ImageContainer>
+                </Descriptions.Item>
+              </Descriptions>
             )
           } 
         </StrokeShow >
@@ -394,8 +348,7 @@ const App = () => {
               <Button 
                 size="large" 
                 type="primary" 
-                ref={nextStrokeRef}
-                onClick={(currentStroke) => nextStroke(currentStroke)}
+                onClick={() => nextStroke()}
                 disabled={tempPoints.length !== currentStroke.strokeOrderLength}
               >下一个笔画（C）</Button>
               <Button size="large" onClick={() => canvasClear}> 清空该笔画关键点（Z）</Button>
@@ -469,3 +422,36 @@ const App = () => {
 }
 
 export default App;
+
+
+
+
+  // const keyAction = useCallback(
+  //   (e) => {
+  //     switch (e.code) {
+  //       case "KeyC":
+  //         nextStroke();
+  //         break;
+  //       case "KeyZ":
+  //         // canvasClear();
+  //         break;
+  //       case "KeyX":
+  //         // reStartChar();
+  //         break;
+  //       case "KeyV":
+  //         // submitChar();
+  //         break;
+  //       case "KeyV":
+  //         console.log("V");
+  //         break;
+  //       default: 
+  //         break;
+  //     }
+  //   }, [ nextStroke ]);
+
+  // useEffect(() => {
+  //   window.addEventListener("keydown", keyAction);
+  //   return () => {
+  //     document.removeEventListener("keydown", keyAction);
+  //   }
+  // }, [ keyAction ]);

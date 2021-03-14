@@ -120,13 +120,6 @@
             "strokeOrderImageUrl": "stroke-18.png"
         },
         {
-            "id": 19,
-            "name": "横撇弯钩",
-            "exampleUrl": "stroke-19.png",
-            "strokeOrderLength": 5,
-            "strokeOrderImageUrl": "stroke-19.png"
-        },
-        {
             "id": 20,
             "name": "横折提",
             "exampleUrl": "stroke-20.png",
@@ -142,24 +135,17 @@
         },
         {
             "id": 22,
-            "name": "横折弯钩",
+            "name": "横折弯钩/横斜钩",
             "exampleUrl": "stroke-22.png",
             "strokeOrderLength": 5,
             "strokeOrderImageUrl": "stroke-22.png"
         },
         {
-            "id": 24,
-            "name": "横折弯",
-            "exampleUrl": "stroke-24.png",
-            "strokeOrderLength": 4,
-            "strokeOrderImageUrl": "stroke-24.png"
-        },
-        {
             "id": 25,
-            "name": "横折折折钩",
-            "exampleUrl": "stroke-25.png",
+            "name": "横折折折钩/横撇弯钩",
+            "exampleUrl": "stroke-2519.png",
             "strokeOrderLength": 6,
-            "strokeOrderImageUrl": "stroke-25.png"
+            "strokeOrderImageUrl": "stroke-2519.png"
         },
         {
             "id": 26,
@@ -177,24 +163,17 @@
         },
         {
             "id": 28,
-            "name": "竖折撇",
-            "exampleUrl": "stroke-28.png",
+            "name": "竖折撇/竖折折",
+            "exampleUrl": "stroke-2829.png",
             "strokeOrderLength": 4,
-            "strokeOrderImageUrl": "stroke-28.png"
-        },
-        {
-            "id": 29,
-            "name": "竖折折",
-            "exampleUrl": "stroke-29.png",
-            "strokeOrderLength": 4,
-            "strokeOrderImageUrl": "stroke-29.png"
+            "strokeOrderImageUrl": "stroke-2829.png"
         },
         {
             "id": 30,
-            "name": "横折折",
-            "exampleUrl": "stroke-30.png",
+            "name": "横折折/横折弯",
+            "exampleUrl": "stroke-3024.png",
             "strokeOrderLength": 4,
-            "strokeOrderImageUrl": "stroke-30.png"
+            "strokeOrderImageUrl": "stroke-3024.png"
         },
         {
             "id": 31,
