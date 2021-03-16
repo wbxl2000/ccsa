@@ -8,6 +8,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../front-end/build')));
+app.use(express.static(path.join(__dirname, './dataset')));
 
 app.all('*', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");

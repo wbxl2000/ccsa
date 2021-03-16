@@ -4,7 +4,6 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import './App.css';
 
 import strokesData from './config/strokes-detail.json';
-import { images } from './config/images.json';
 
 import {
   Wrapper,
@@ -25,8 +24,6 @@ import {
   TitleTextSpan2
 } from './style';
 
-// import StrokePicker from './components/stroke-picker';
-
 import { Button, Radio, Progress, Image, Descriptions, Badge, message, Input, Spin, Alert } from 'antd';
 
 import { UserOutlined } from '@ant-design/icons';
@@ -35,14 +32,6 @@ const TextRegular = (text) => {
   return (
     <ContextRegularSpan>{text}</ContextRegularSpan>
   )
-}
-
-const getMapImageUrls = () => {
-    const res = {};
-    images.forEach((image) => {
-      res[image.id] = image.fileName;
-    });
-    return res;
 }
 
 const App = () => {
@@ -55,7 +44,6 @@ const App = () => {
   const [ strokeList, setStrokeList ] = useState({});
   const [ strokeIndex, setStrokeIndex ] = useState(1); // 现在是第几个笔画
   const [ strokeCompleted,  setStrokeCompleted] = useState(false); // 记录是否完成当前字
-  const [ imagesUrls, mapUrls ] = useState({});
   const [ systemInfo, setSystemInfo ] = useState({});
   const [ result, setResult ] = useState([]);
   const [ tempPoints, addPoints ] = useState([]);
@@ -111,18 +99,11 @@ const App = () => {
     // 笔画进度一旦修改，那么当前笔画一定要更新，缓存数据要清零
   useEffect(() => {
     if (strokeListLoading) return;
-    // console.log("who" + strokeList[strokeIndex-1]);
-    // console.log(strokesData);
-    // console.log(strokesData.strokes.find(stroke => stroke.id === strokeList[strokeIndex-1]));
     setCurrentStroke(() => strokesData.strokes.find(stroke => stroke.id === strokeList[strokeIndex-1]));
     addPoints(() => []);
   }, [ strokeListLoading, strokeIndex, strokeList ]);
 
-
-  useEffect(() => mapUrls(getMapImageUrls), []);
-
   const Paint = (e) => { // 每次点击canvas
-    // console.log(tempPoints.length, currentStroke.strokeOrderLength);
     if (tempPoints.length + 1 > currentStroke.strokeOrderLength) {
       message.error('关键点数量溢出，请检查数量');
       return;
@@ -137,14 +118,12 @@ const App = () => {
     ctx.strokeStyle = "magenta";
     ctx.fillStyle = "magenta";
     ctx.stroke();
-    // console.log(tempPoints);
     addPoints(() => {
       return [...tempPoints, [x, y]];
     });
   }
 
   const canvasClear = () => {
-    // console.log("qingkong");
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, 256, 256);
@@ -152,7 +131,6 @@ const App = () => {
   };
 
   const nextStroke = () => {
-    // console.log(tempPoints.length, currentStroke.strokeOrderLength);
     if (strokeCompleted) {
       message.warning("已经录入完成所有笔画，请进入下一个字");
       return;
@@ -189,7 +167,6 @@ const App = () => {
     }
     setSubmitLoading(true);
     (async () => {
-      // console.log(currentChar);
       const ans = {
         dataSetId: systemInfo.dataSetId,
         currentImageId: systemInfo.currentImageId,
@@ -200,7 +177,6 @@ const App = () => {
         result
       }
       const reqResult = await axios.post('http://localhost:4000/api/submit', ans);
-      // console.log(reqResult.data);
       (reqResult.data === "success") && setSubmitSuccess(() => true);
       setSubmitLoading(false);
     })();
@@ -303,7 +279,6 @@ const App = () => {
                   <TitleWrapper>
                     <TitleTextSpan>
                       数据集：{systemInfo.dataSetId}号
-                      {/* <span style={{fontSize: "20px", color: "#909090"}}>     进度：[{systemInfo.currentImageId}/{systemInfo.total}]</span> */}
                     </TitleTextSpan>
                     <Input 
                       style={{ width: '40%' }} 
@@ -338,7 +313,7 @@ const App = () => {
                       left: "0px",
                       position: "absolute"
                     }}
-                    src={`/assets/source/${systemInfo.dataSetId}/${imagesUrls[systemInfo.currentImageId]}`}
+                    src={`http://localhost:4000/${systemInfo.dataSetId}/${currentChar.fileName}`}
                   >
                   </img>
                 )
@@ -380,7 +355,6 @@ const App = () => {
                 </Spin>
               ) : (
                   result.map((item, index) => {
-                    // console.log(item);
                     return (
                         <div key={index} style={{ fontSize: "18px", display: "flex", flexDirection: "column", alignItems: "center" }}> 
                           <span>
@@ -393,7 +367,6 @@ const App = () => {
                             }}
                           >
                             <div 
-                              // style={{ fontSize: "18px", display: "flex", flexDirection: "column", alignItems: "center" }}
                             >
                               {
                                 item.record.map((item2, index2) => {
@@ -417,11 +390,12 @@ const App = () => {
               { submitLoading ? (<Spin />) : null }
             </div>
             <Button 
-              // style={{margin: "10px"}} 
               size="large" type="primary" 
               onClick={() => submitChar(false)} 
               disabled={!strokeCompleted}
-            >提交本字（V）</Button>
+            >
+              提交本字（V）
+            </Button>
           </HistoryWrapper>
         </CharacterWrapper>
       </RightWrapper>
