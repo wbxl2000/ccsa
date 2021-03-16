@@ -210,6 +210,7 @@ const App = () => {
   useHotkeys('z', () => canvasClear());
   useHotkeys('x', () => reStartChar());
   useHotkeys('h', () => submitChar(true), {}, [ strokeCompleted, systemInfo, currentChar, currentAuthor ]);
+  useHotkeys('v', () => submitChar(false), {}, [ strokeCompleted, systemInfo, currentChar, currentAuthor ]);
   
 
   return (
