@@ -70,6 +70,8 @@ app.post('/api/submit', (req, res) => {
       });
     });    
   }
+
+  
   fs.readFile(`${__dirname}\\result\\data.json`, (err, data) => {  // READ
     if (err) {
         res.end("error"+ err);
