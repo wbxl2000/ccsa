@@ -37,3 +37,10 @@
 ## 结果文件
 
 `./server/result/data.json`
+
+## FAQ
+
+### 如何修改指定数据集？
+
+在`./server/src/system-info.json`中修改字段：`"dataSetId"`，修改为几号则从几号数据集开始。如果遇到之前未完成的进度，还可以修改同文件中的`"currentImageId"`字段，表示从这个数据集的哪一张图片开始。
+
