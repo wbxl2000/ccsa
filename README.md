@@ -30,3 +30,7 @@
 
 注意，此时与运行不同的地方在于，需要访问`localhost:3000`，此时访问的是实时编译的前端，而不是`build`文件夹，如已经修改完，则可以执行`yarn build`生成新的`build`文件夹，之后就可以愉快地继续直接只运行后端了。
 
+## 数据集使用
+
+链接在 群内 和 [google drive](https://drive.google.com/file/d/1zX--Psl_ORlId4fbRuqSpAX2zJ-I1mVF/view?usp=sharing) 都有，群内下得快，下载之后将其解压到`./server/`，即`./server/dataSet_100per/1`...
+
