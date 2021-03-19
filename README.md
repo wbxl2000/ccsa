@@ -34,3 +34,6 @@
 
 链接在 群内 和 [google drive](https://drive.google.com/file/d/1zX--Psl_ORlId4fbRuqSpAX2zJ-I1mVF/view?usp=sharing) 都有，群内下得快，下载之后将其解压到`./server/`，即`./server/dataSet_100per/1`...
 
+## 结果文件
+
+`./server/result/data.json`
