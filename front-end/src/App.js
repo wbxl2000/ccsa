@@ -24,7 +24,7 @@ import {
   TitleTextSpan2
 } from './style';
 
-import { Result, Button, Radio, Progress, Image, Descriptions, Badge, message, Input, Spin, Alert } from 'antd';
+import { Tooltip, Result, Button, Radio, Progress, Image, Descriptions, Badge, message, Input, Spin, Alert } from 'antd';
 
 import { UserOutlined } from '@ant-design/icons';
 
@@ -50,13 +50,14 @@ const App = () => {
   const [ currentAuthor, setCurrentAuthor ] = useState([]);
   const [ total, setTotal ] = useState(999); 
   const [ fullComplete, setFullComplete ] = useState(false);
+  const [ submitSuccess, setSubmitSuccess ] = useState(false);
 
   // Loading
   const [ sysInfoLoading, setSysInfoLoading ] = useState(true);
   const [ currentCharLoading, setCurrentCharLoading ] = useState(true);
   const [ strokeListLoading, setStrokeListLoading ] = useState(true);
   const [ submitLoading, setSubmitLoading ] = useState(false);
-  const [ submitSuccess, setSubmitSuccess ] = useState(false);
+  const [ saveLoading, setSaveLoading ] = useState(false);
   
   const canvasClear = useCallback(() => {
     if (fullComplete) return;
@@ -76,7 +77,7 @@ const App = () => {
       setSysInfoLoading(() => false);
     })();
     canvasClear(); // 顺便清空一下canvas
-  }, [ submitSuccess, canvasClear ]);
+  }, [ canvasClear ]);
     // 重新获取字的信息和笔画的信息
   useEffect(() => {
     if (sysInfoLoading) return;
@@ -117,18 +118,18 @@ const App = () => {
   }, [ strokeListLoading, strokeIndex, strokeList ]);
 
   useEffect(() => {
-    if (systemInfo.currentImageId > total) {
-      console.log(systemInfo.currentImageId, total);
-      // message.success("全部完成啦！");
-      setFullComplete(() => true);
-    }
-  }, [ systemInfo, total ]);
-
-  useEffect(() => {
     if (strokeCompleted) {
       message.success("该字已完成")
     }
-  }, [ strokeCompleted ])
+  }, [ strokeCompleted ]);
+
+  useEffect(() => {
+    console.log(systemInfo.currentImageId, total);
+    if (systemInfo.currentImageId === total) {
+      // message.success("全部完成啦！");
+      setFullComplete(() => true);
+    }
+  }, [ submitSuccess ]);
 
   const Paint = (e) => { // 每次点击canvas
     if (tempPoints.length + 1 > currentStroke.strokeOrderLength) {
@@ -186,7 +187,7 @@ const App = () => {
       message.warning("笔画数量未达到预设标准");
       return;
     }
-    setSubmitLoading(true);
+    setSubmitLoading(() => true);
     let myDate = new Date();
     (async () => {
       const ans = {
@@ -201,19 +202,26 @@ const App = () => {
       }
       const reqResult = await axios.post('http://localhost:4000/api/submit', ans);
       (reqResult.data === "success") && setSubmitSuccess(() => true);
-      setSubmitLoading(false);
+      setSubmitLoading(() => false);
     })();
   };
 
-  const nextDataset = () => {
+  const saveData = () => {
+    setSaveLoading(() => true);
     (async () => {
       const ans = {
-        dataSetId: systemInfo.dataSetId
+        dataSetId: systemInfo.dataSetId,
+        author: currentAuthor
       }
-      const reqResult = await axios.post('http://localhost:4000/api/next-dataset', ans);
-      (reqResult.data === "success") && setFullComplete(() => false);
-      setSubmitLoading(false);
+      const reqResult = await axios.post('http://localhost:4000/api/save-data', ans);
+      if (reqResult.data === "success") {
+        message.success(`已经保存至${ans.dataSetId}.json`)
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
     })();
+    setSaveLoading(() => false);
   };
 
   useHotkeys('c', () => nextStroke(), {}, [ strokeCompleted, tempPoints, currentStroke, result, strokeList, strokeIndex ]);
@@ -232,9 +240,12 @@ const App = () => {
             status="success"
             title="当前数据集已标注完成"
             extra={[
-              <Button type="primary" onClick={() => nextDataset()}>
-                下一个
-              </Button>,
+              <Tooltip placement="bottom" title={`将结果保存为"data_${systemInfo.dataSetId}.json"，并进入下一个数据集`}>
+                <Button type="primary" onClick={() => saveData()}>
+                  保存数据文件
+                </Button>
+              </Tooltip>,
+              saveLoading ? (<Spin />) : null 
             ]}
           />
         ) : (
