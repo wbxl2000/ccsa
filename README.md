@@ -32,7 +32,7 @@
 
 ## 数据集使用
 
-链接在 群内 和 [google drive](https://drive.google.com/file/d/1zX--Psl_ORlId4fbRuqSpAX2zJ-I1mVF/view?usp=sharing) 都有，群内下得快，下载之后将其解压到`./server/`，即`./server/dataSet_100per/1`...
+目前是v3版本，链接在 群内 和 [google drive](https://drive.google.com/file/d/1w6fJXPaL70ijfs2HM3rGLcOrBnemuDz8/view?usp=sharing) 都有，群内下得快，下载之后将其解压到`./server/`，即`./server/dataSet_100per_v3/1`...
 
 ## 结果文件
 

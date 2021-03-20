@@ -77,7 +77,7 @@ const App = () => {
       setSysInfoLoading(() => false);
     })();
     canvasClear(); // 顺便清空一下canvas
-  }, [ canvasClear ]);
+  }, [ canvasClear, submitSuccess ]);
     // 重新获取字的信息和笔画的信息
   useEffect(() => {
     if (sysInfoLoading) return;

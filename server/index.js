@@ -5,10 +5,12 @@ var path = require('path');
 const port = 4000;
 const app = express();
 
+const datasetFolderName = 'dataSet_100per_v3';
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../front-end/build')));
-app.use(express.static(path.join(__dirname, './dataSet_100per')));
+app.use(express.static(path.join(__dirname, `./${datasetFolderName}`)));
 
 app.all('*', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -45,7 +47,7 @@ app.get('/api/character-info', (req, res) => {
   console.log('/api/character-info');
   const { id } = req.query;
   const { dataSetId } = JSON.parse(fs.readFileSync(`${__dirname}\\src\\config\\system-info.json`));
-  const images = JSON.parse(fs.readFileSync(__dirname + `\\dataSet_100per\\${dataSetId}\\images.json`));
+  const images = JSON.parse(fs.readFileSync(__dirname + `\\${datasetFolderName}\\${dataSetId}\\images.json`));
   const img = images.images.find((item) => {
     return (item.id.toString() === id)
   });

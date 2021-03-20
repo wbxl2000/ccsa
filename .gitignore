@@ -2,7 +2,8 @@
 
 # dependencies
 node_modules
-dataSet_100per
+dataSet_100per_v2
+dataSet_100per_v3
 /.pnp
 .pnp.js
 
