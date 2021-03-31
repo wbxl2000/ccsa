@@ -367,7 +367,7 @@ const App = () => {
                       </Spin>
                       ) : (
                         <img 
-                          alt=""
+                          alt="没有此图片~请检查数据集是否已全部完成"
                           style={{
                             left: "0px",
                             position: "absolute"
@@ -461,7 +461,6 @@ const App = () => {
           </>
         )
       }
-
     </Wrapper>
   );
 }
