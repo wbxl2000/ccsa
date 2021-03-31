@@ -1,9 +1,17 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# template not ignore
+/server/dataSet_100per_v3/*
+!/server/dataSet_100per_v3/10000/
+!/server/dataSet_100per_v3/10001/
+!/server/dataSet_100per_v3/10002/
+
+# data not ignore
+/server/result/*
+!/server/result/data.json
+
 # dependencies
 node_modules
-dataSet_100per_v2
-dataSet_100per_v3
 /.pnp
 .pnp.js
 

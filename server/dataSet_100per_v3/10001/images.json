@@ -1,0 +1,77 @@
+{
+    "dataSetId": 10001,
+    "sum": 5,
+    "images": [
+        {
+            "fileName": "10001-1.png",
+            "id": 1,
+            "cId": 10,
+            "name": "与",
+            "height": 256,
+            "width": 256,
+            "strokes": [
+                1,
+                17,
+                1
+            ]
+        },
+        {
+            "fileName": "10001-2.png",
+            "id": 2,
+            "cId": 14,
+            "name": "世",
+            "height": 256,
+            "width": 256,
+            "strokes": [
+                1,
+                2,
+                2,
+                1,
+                15
+            ]
+        },
+        {
+            "fileName": "10001-3.png",
+            "id": 3,
+            "cId": 37,
+            "name": "乃",
+            "height": 256,
+            "width": 256,
+            "strokes": [
+                25,
+                3
+            ]
+        },
+        {
+            "fileName": "10001-4.png",
+            "id": 4,
+            "cId": 50,
+            "name": "乖",
+            "height": 256,
+            "width": 256,
+            "strokes": [
+                3,
+                1,
+                2,
+                2,
+                1,
+                7,
+                3,
+                12
+            ]
+        },
+        {
+            "fileName": "10001-5.png",
+            "id": 5,
+            "cId": 55,
+            "name": "也",
+            "height": 256,
+            "width": 256,
+            "strokes": [
+                8,
+                2,
+                12
+            ]
+        }
+    ]
+}
