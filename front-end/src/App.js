@@ -348,7 +348,7 @@ const App = () => {
                             onChange={e => setCurrentAuthor(() => e.target.value)}
                           />
                         </TitleWrapper>
-                        <TitleTextSpan2><Badge status="processing" />当前字："{currentChar.name}"，进度：{systemInfo.currentImageId}/{total}</TitleTextSpan2>
+                        <TitleTextSpan2><Badge status="processing" />当前字："{currentChar.name}"，进度：{systemInfo.currentImageId}/{total-1}</TitleTextSpan2>
                       </DataSetTitle>
                     )
                   }
