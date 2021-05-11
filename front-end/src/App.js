@@ -54,6 +54,7 @@ const App = () => {
 
   // Loading
   const [ sysInfoLoading, setSysInfoLoading ] = useState(true);
+  const [ fullCompleteLoading, setFullCompleteLoading ] = useState(true);
   const [ currentCharLoading, setCurrentCharLoading ] = useState(true);
   const [ strokeListLoading, setStrokeListLoading ] = useState(true);
   const [ submitLoading, setSubmitLoading ] = useState(false);
@@ -73,6 +74,9 @@ const App = () => {
     (async () => {
       setSysInfoLoading(() => true);
       const reqResult = await axios('http://localhost:4000/api/system-info');
+      if (reqResult.data.currentImageId === total + 1) {
+        setFullComplete(() => true);
+      }
       setSystemInfo(() => reqResult.data);
       setSysInfoLoading(() => false);
     })();
@@ -86,6 +90,7 @@ const App = () => {
       setCurrentCharLoading(() => true);
       const reqResult = await axios('http://localhost:4000/api/character-info?id=' + systemInfo.currentImageId);
       setCurrentChar(() => reqResult.data.img);
+      console.log(reqResult.data);
       setTotal(() => setTotal(reqResult.data.total));
       setCurrentCharLoading(() => false);
       setSubmitSuccess(() => false);
@@ -123,13 +128,12 @@ const App = () => {
     }
   }, [ strokeCompleted ]);
 
-  useEffect(() => {
-    console.log(systemInfo.currentImageId, total);
-    if (systemInfo.currentImageId === total) {
-      // message.success("全部完成啦！");
-      setFullComplete(() => true);
-    }
-  }, [ submitSuccess ]);
+  // useEffect(() => {
+  //   if (systemInfo.currentImageId === total + 1) {
+  //     // message.success("全部完成啦！");
+  //     setFullComplete(() => true);
+  //   }
+  // }, [ submitSuccess ]);
 
   const Paint = (e) => { // 每次点击canvas
     if (tempPoints.length + 1 > currentStroke.strokeOrderLength) {
@@ -150,7 +154,6 @@ const App = () => {
       return [...tempPoints, [x, y]];
     });
   }
-
 
   const nextStroke = () => {
     if (strokeCompleted) {
@@ -230,11 +233,10 @@ const App = () => {
   useHotkeys('h', () => submitChar(true), {}, [ strokeCompleted, systemInfo, currentChar, currentAuthor ]);
   useHotkeys('v', () => submitChar(false), {}, [ strokeCompleted, systemInfo, currentChar, currentAuthor ]);
 
-
   return (
     <Wrapper>
       {
-        fullComplete ? (
+        !sysInfoLoading && fullComplete ? (
           <Result
             style={{margin: 'auto'}}
             status="success"
@@ -348,7 +350,7 @@ const App = () => {
                             onChange={e => setCurrentAuthor(() => e.target.value)}
                           />
                         </TitleWrapper>
-                        <TitleTextSpan2><Badge status="processing" />当前字："{currentChar.name}"，进度：{systemInfo.currentImageId}/{total-1}</TitleTextSpan2>
+                        <TitleTextSpan2><Badge status="processing" />当前字："{currentChar.name}"，进度：{systemInfo.currentImageId}/{total}</TitleTextSpan2>
                       </DataSetTitle>
                     )
                   }

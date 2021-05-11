@@ -1,6 +1,6 @@
 {
     "dataSetId": 10001,
-    "sum": 6,
+    "sum": 5,
     "images": [
         {
             "fileName": "10001-1.png",
@@ -74,17 +74,13 @@
             ]
         },
         {
-            "fileName": "10001-5.png",
+            "fileName": "",
             "id": 6,
-            "cId": 55,
-            "name": "也",
+            "cId": 1,
+            "name": "",
             "height": 256,
             "width": 256,
-            "strokes": [
-                8,
-                2,
-                12
-            ]
+            "strokes": []
         }
     ]
 }

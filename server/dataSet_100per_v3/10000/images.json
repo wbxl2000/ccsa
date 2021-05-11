@@ -1,6 +1,6 @@
 {
     "dataSetId": 10000,
-    "sum": 6,
+    "sum": 5,
     "images": [
         {
             "fileName": "10000-1.png",
@@ -63,19 +63,6 @@
         {
             "fileName": "10000-5.png",
             "id": 5,
-            "cId": 55,
-            "name": "也",
-            "height": 256,
-            "width": 256,
-            "strokes": [
-                8,
-                2,
-                12
-            ]
-        },
-        {
-            "fileName": "10000-5.png",
-            "id": 6,
             "cId": 55,
             "name": "也",
             "height": 256,
