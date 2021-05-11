@@ -54,7 +54,6 @@ const App = () => {
 
   // Loading
   const [ sysInfoLoading, setSysInfoLoading ] = useState(true);
-  const [ fullCompleteLoading, setFullCompleteLoading ] = useState(true);
   const [ currentCharLoading, setCurrentCharLoading ] = useState(true);
   const [ strokeListLoading, setStrokeListLoading ] = useState(true);
   const [ submitLoading, setSubmitLoading ] = useState(false);
@@ -81,7 +80,7 @@ const App = () => {
       setSysInfoLoading(() => false);
     })();
     canvasClear(); // 顺便清空一下canvas
-  }, [ canvasClear, submitSuccess ]);
+  }, [ canvasClear, submitSuccess, total ]);
     // 重新获取字的信息和笔画的信息
   useEffect(() => {
     if (sysInfoLoading) return;
@@ -91,7 +90,9 @@ const App = () => {
       const reqResult = await axios('http://localhost:4000/api/character-info?id=' + systemInfo.currentImageId);
       setCurrentChar(() => reqResult.data.img);
       console.log(reqResult.data);
-      setTotal(() => setTotal(reqResult.data.total));
+      if (reqResult.data.total !== total) {
+        setTotal(() => setTotal(reqResult.data.total));
+      }
       setCurrentCharLoading(() => false);
       setSubmitSuccess(() => false);
       setStrokeIndex(() => 1);
@@ -99,7 +100,7 @@ const App = () => {
       setResult(() => []);
       setCurrentAuthor(() => systemInfo.author);
     })();
-  }, [ sysInfoLoading, systemInfo, fullComplete ]);
+  }, [ sysInfoLoading, systemInfo, fullComplete, total ]);
     // 如果获取了字的信息，那么更新笔画的信息
   useEffect(() => {
     if (currentCharLoading) return;
