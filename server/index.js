@@ -27,13 +27,13 @@ app.get('/', function(req, res) {
 
 app.get('/api/system-info', (req, res) => {
   console.log('/api/system-info');
-  const systemInfo = JSON.parse(fs.readFileSync(__dirname + '\\src\\config\\system-info.json'));
+  const systemInfo = JSON.parse(fs.readFileSync(__dirname + '/src/config/system-info.json'));
   res.json(systemInfo);
 });
 
 app.get('/api/strokes-list', (req, res) => {
   console.log('/api/strokes-list');
-  const { characters } = JSON.parse(fs.readFileSync(__dirname + '\\src\\config\\strokes-list.json'));
+  const { characters } = JSON.parse(fs.readFileSync(__dirname + '/src/config/strokes-list.json'));
   if (!characters) res.end();
   const { id } = req.query;
   const char = characters.find((item) => {
@@ -42,12 +42,11 @@ app.get('/api/strokes-list', (req, res) => {
   res.json(char.strokes);
 });
 
-
 app.get('/api/character-info', (req, res) => {
   console.log('/api/character-info');
   const { id } = req.query;
-  const { dataSetId } = JSON.parse(fs.readFileSync(`${__dirname}\\src\\config\\system-info.json`));
-  const images = JSON.parse(fs.readFileSync(__dirname + `\\${datasetFolderName}\\${dataSetId}\\images.json`));
+  const { dataSetId } = JSON.parse(fs.readFileSync(`${__dirname}/src/config/system-info.json`));
+  const images = JSON.parse(fs.readFileSync(__dirname + `/${datasetFolderName}/${dataSetId}/images.json`));
   const img = images.images.find((item) => {
     return (item.id.toString() === id)
   });
@@ -71,7 +70,7 @@ app.post('/api/save-data', (req, res) => {
         currentImageId: 1,
         author: req.body.author
       };
-      fs.writeFile(`${__dirname}\\src\\config\\system-info.json`, JSON.stringify(newData), (err, result) => {  // WRITE
+      fs.writeFile(`${__dirname}/src/config/system-info.json`, JSON.stringify(newData), (err, result) => {  // WRITE
         if (err) {
           res.end("error" + err);
           return console.error(err);
@@ -93,13 +92,10 @@ app.post('/api/save-data', (req, res) => {
   })
 });
 
-
-
-
 app.post('/api/submit', (req, res) => {
   console.log('/api/submit');
   const nextImage = () => {
-    fs.readFile(`${__dirname}\\src\\config\\system-info.json`, (err, data) => {  // READ
+    fs.readFile(`${__dirname}/src/config/system-info.json`, (err, data) => {  // READ
       if (err) {
           res.end("error" + err);
           return console.error(err);
@@ -107,7 +103,7 @@ app.post('/api/submit', (req, res) => {
       const newData = JSON.parse(data.toString());
       newData.currentImageId = req.body.currentImageId + 1;
       newData.author = req.body.author;
-      const writeData = fs.writeFile(`${__dirname}\\src\\config\\system-info.json`, JSON.stringify(newData), (err, result) => {  // WRITE
+      const writeData = fs.writeFile(`${__dirname}/src/config/system-info.json`, JSON.stringify(newData), (err, result) => {  // WRITE
           if (err) {
             res.end("error"+ err);
             return console.error(err);
@@ -117,7 +113,7 @@ app.post('/api/submit', (req, res) => {
       });
     });    
   }
-  fs.readFile(`${__dirname}\\result\\data.json`, (err, data) => {  // READ
+  fs.readFile(`${__dirname}/result/data.json`, (err, data) => {  // READ
     if (err) {
         res.end("error"+ err);
         return console.error(err);
@@ -125,7 +121,7 @@ app.post('/api/submit', (req, res) => {
     // console.log(data);
     const newData = JSON.parse(data.toString());
     newData.content.push(req.body);
-    const writeData = fs.writeFile(`${__dirname}\\result\\data.json`, JSON.stringify(newData), (err, result) => {  // WRITE
+    const writeData = fs.writeFile(`${__dirname}/result/data.json`, JSON.stringify(newData), (err, result) => {  // WRITE
         if (err) {
           res.end("error"+ err);
           return console.error(err);
@@ -135,9 +131,6 @@ app.post('/api/submit', (req, res) => {
     });
   });
 })
-
-
-
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
