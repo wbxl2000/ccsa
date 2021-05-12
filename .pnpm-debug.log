@@ -1,0 +1,14 @@
+{
+  "0 debug pnpm:scope": {
+    "selected": 1
+  },
+  "1 error pnpm": {
+    "code": "ERR_PNPM_NO_IMPORTER_MANIFEST_FOUND",
+    "err": {
+      "name": "Error",
+      "message": "No package.json (or package.yaml, or package.json5) was found in \"C:\\qerdata\\project\\ccsa\".",
+      "code": "ERR_PNPM_NO_IMPORTER_MANIFEST_FOUND",
+      "stack": "Error: No package.json (or package.yaml, or package.json5) was found in \"C:\\qerdata\\project\\ccsa\".\n    at readProjectManifest (C:\\Users\\qer\\AppData\\Roaming\\npm\\pnpm-global\\5\\node_modules\\.pnpm\\pnpm@6.3.0\\node_modules\\pnpm\\dist\\pnpm.cjs:43384:11)\n    at async Object.readProjectManifestOnly (C:\\Users\\qer\\AppData\\Roaming\\npm\\pnpm-global\\5\\node_modules\\.pnpm\\pnpm@6.3.0\\node_modules\\pnpm\\dist\\pnpm.cjs:43388:24)\n    at async Object.readProjectManifestOnly (C:\\Users\\qer\\AppData\\Roaming\\npm\\pnpm-global\\5\\node_modules\\.pnpm\\pnpm@6.3.0\\node_modules\\pnpm\\dist\\pnpm.cjs:43603:22)\n    at async Object.handler (C:\\Users\\qer\\AppData\\Roaming\\npm\\pnpm-global\\5\\node_modules\\.pnpm\\pnpm@6.3.0\\node_modules\\pnpm\\dist\\pnpm.cjs:117113:22)\n    at async Timeout._onTimeout (C:\\Users\\qer\\AppData\\Roaming\\npm\\pnpm-global\\5\\node_modules\\.pnpm\\pnpm@6.3.0\\node_modules\\pnpm\\dist\\pnpm.cjs:121003:22)"
+    }
+  }
+}

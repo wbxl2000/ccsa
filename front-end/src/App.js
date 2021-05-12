@@ -197,6 +197,7 @@ const App = () => {
       const ans = {
         dataSetId: systemInfo.dataSetId,
         currentImageId: systemInfo.currentImageId,
+        fileName: currentChar.fileName,
         author: currentAuthor,
         charId: currentChar.id,
         skip,

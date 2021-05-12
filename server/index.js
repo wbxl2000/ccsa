@@ -115,7 +115,7 @@ app.post('/api/submit', (req, res) => {
   }
   fs.readFile(`${__dirname}/result/data.json`, (err, data) => {  // READ
     if (err) {
-        res.end("error"+ err);
+        res.end("error" + err);
         return console.error(err);
     };
     // console.log(data);
