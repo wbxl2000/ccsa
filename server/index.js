@@ -92,7 +92,7 @@ app.post('/api/save-data', (req, res) => {
         return console.error(err);
       } else {
         const newData = {
-          dataSetId: req.body.dataSetId + 1,
+          dataSetId: parseInt(req.body.dataSetId) + 1,
           currentImageId: 1,
           author: req.body.author
         };

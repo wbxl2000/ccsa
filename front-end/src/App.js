@@ -47,7 +47,7 @@ const App = () => {
   const [ systemInfo, setSystemInfo ] = useState({});
   const [ result, setResult ] = useState([]);
   const [ tempPoints, addPoints ] = useState([]);
-  const [ currentAuthor, setCurrentAuthor ] = useState();
+  const [ currentAuthor, setCurrentAuthor ] = useState('');
   const [ total, setTotal ] = useState(999); 
   const [ fullComplete, setFullComplete ] = useState(false);
   const [ submitSuccess, setSubmitSuccess ] = useState(false);
