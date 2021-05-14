@@ -465,7 +465,7 @@ const App = () => {
                   </div>
                   <div>
                     <Progress style={{margin: "10px"}} type="circle" status={ submitSuccess ? null : "active"} percent={
-                      strokeCompleted ? 100 : (((strokeIndex-1)/strokeList.length)*100)
+                      strokeCompleted ? 100 : (((strokeIndex-1)/strokeList.length)*100).toFixed(2)
                     } width={80} />
                     { submitLoading ? (<Spin />) : null }
                   </div>
