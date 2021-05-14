@@ -47,7 +47,7 @@ const App = () => {
   const [ systemInfo, setSystemInfo ] = useState({});
   const [ result, setResult ] = useState([]);
   const [ tempPoints, addPoints ] = useState([]);
-  const [ currentAuthor, setCurrentAuthor ] = useState([]);
+  const [ currentAuthor, setCurrentAuthor ] = useState();
   const [ total, setTotal ] = useState(999); 
   const [ fullComplete, setFullComplete ] = useState(false);
   const [ submitSuccess, setSubmitSuccess ] = useState(false);
@@ -211,16 +211,17 @@ const App = () => {
     })();
   };
 
-  const saveData = () => {
+  const saveData = (para) => {
     setSaveLoading(() => true);
     (async () => {
       const ans = {
         dataSetId: systemInfo.dataSetId,
-        author: currentAuthor
+        author: currentAuthor,
+        para
       }
       const reqResult = await axios.post('http://localhost:4000/api/save-data', ans);
       if (reqResult.data === "success") {
-        message.success(`已经保存至${ans.dataSetId}.json`)
+        message.success(para === 'skip' ? `切换成功` : `已经保存至${ans.dataSetId}.json`)
         setTimeout(() => {
           window.location.reload();
         }, 1000);
@@ -341,10 +342,26 @@ const App = () => {
                       <DataSetTitle>
                         <TitleWrapper>
                           <TitleTextSpan>
-                            数据集：{systemInfo.dataSetId}号
+                            当前数据集：
+                              <Input 
+                              style={{ width: '18%', fontSize: '20px'}} 
+                              size="large" 
+                              placeholder="点击右侧按钮可以转到" 
+                              value={systemInfo.dataSetId} 
+                              onChange={e => {
+                                message.warning('点击右侧按钮转到');
+                                setSystemInfo({
+                                  ...systemInfo,
+                                  dataSetId: e.target.value
+                                })
+                              }}
+                            />号
+                            <Button type="primary" style={{ left: '10px' }}  onClick={() => saveData('skip')}>
+                              转到
+                            </Button>
                           </TitleTextSpan>
                           <Input 
-                            style={{ width: '40%' }} 
+                            style={{ width: '25%' }} 
                             size="large" 
                             placeholder="请填写记录人" 
                             prefix={<UserOutlined />} 
@@ -371,7 +388,7 @@ const App = () => {
                       </Spin>
                       ) : (
                         <img 
-                          alt="没有此图片~请检查数据集是否已全部完成"
+                          alt="此数据集未存在，请检查"
                           style={{
                             left: "0px",
                             position: "absolute"

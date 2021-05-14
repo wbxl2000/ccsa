@@ -60,36 +60,63 @@ app.get('/api/character-info', (req, res) => {
 app.post('/api/save-data', (req, res) => {
   console.log('/api/save-data');
   const id = req.body.dataSetId;
-  fs.copyFile('./result/data.json', `./result/data_${id}.json`, (err, result) => {
-    if (err) {
-      res.end("error" + err);
-      return console.error(err);
-    } else {
-      const newData = {
-        dataSetId: req.body.dataSetId + 1,
-        currentImageId: 1,
-        author: req.body.author
-      };
-      fs.writeFile(`${__dirname}/src/config/system-info.json`, JSON.stringify(newData), (err, result) => {  // WRITE
-        if (err) {
-          res.end("error" + err);
-          return console.error(err);
-        } else {
-          const initData = {
-            content: []
-          };
-          fs.writeFile('./result/data.json', JSON.stringify(initData), (err, result) => {  // WRITE
-            if (err) {
-              res.end("error" + err);
-              return console.error(err);
-            } else {
-              res.end("success");
-            }
-          });
-        }
-      });
-    }
-  })
+  console.log(req.body.author);
+  if (req.body.para === 'skip') {
+    const newData = {
+      dataSetId: req.body.dataSetId,
+      currentImageId: 1,
+      author: req.body.author
+    };
+    fs.writeFile(`${__dirname}/src/config/system-info.json`, JSON.stringify(newData), (err, result) => {  // WRITE
+      if (err) {
+        res.end("error" + err);
+        return console.error(err);
+      } else {
+        const initData = {
+          content: []
+        };
+        fs.writeFile('./result/data.json', JSON.stringify(initData), (err, result) => {  // WRITE
+          if (err) {
+            res.end("error" + err);
+            return console.error(err);
+          } else {
+            res.end("success");
+          }
+        });
+      }
+    });
+  } else {
+    fs.copyFile('./result/data.json', `./result/data_${id}.json`, (err, result) => {
+      if (err) {
+        res.end("error" + err);
+        return console.error(err);
+      } else {
+        const newData = {
+          dataSetId: req.body.dataSetId + 1,
+          currentImageId: 1,
+          author: req.body.author
+        };
+        fs.writeFile(`${__dirname}/src/config/system-info.json`, JSON.stringify(newData), (err, result) => {  // WRITE
+          if (err) {
+            res.end("error" + err);
+            return console.error(err);
+          } else {
+            const initData = {
+              content: []
+            };
+            fs.writeFile('./result/data.json', JSON.stringify(initData), (err, result) => {  // WRITE
+              if (err) {
+                res.end("error" + err);
+                return console.error(err);
+              } else {
+                res.end("success");
+              }
+            });
+          }
+        });
+      }
+    })
+  }
 });
 
 app.post('/api/submit', (req, res) => {
