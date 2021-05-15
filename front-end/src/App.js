@@ -89,7 +89,7 @@ const App = () => {
       setCurrentCharLoading(() => true);
       const reqResult = await axios('http://localhost:4000/api/character-info?id=' + systemInfo.currentImageId);
       setCurrentChar(() => reqResult.data.img);
-      console.log(reqResult.data);
+      // console.log(reqResult.data);
       if (reqResult.data.total !== total) {
         setTotal(() => setTotal(reqResult.data.total));
       }
@@ -378,7 +378,7 @@ const App = () => {
                   <span>请在红框内进行标记</span>
                   <Character>
                     {
-                      sysInfoLoading ? (
+                      sysInfoLoading || !currentChar || !currentChar.fileName ? (
                       <Spin tip="Loading...">
                         <Alert
                           message="sysInfo"
@@ -435,6 +435,7 @@ const App = () => {
                       </Spin>
                     ) : (
                         result.reverse().map((item, index) => {
+                          console.log(result);
                           return (
                               <div key={index} style={{ fontSize: "18px", display: "flex", flexDirection: "column", alignItems: "center" }}> 
                                 <span>
