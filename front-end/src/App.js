@@ -434,7 +434,7 @@ const App = () => {
                       <Spin tip="strokeList">
                       </Spin>
                     ) : (
-                        result.reverse().map((item, index) => {
+                        [...result].reverse().map((item, index) => {
                           console.log(result);
                           return (
                               <div key={index} style={{ fontSize: "18px", display: "flex", flexDirection: "column", alignItems: "center" }}> 
