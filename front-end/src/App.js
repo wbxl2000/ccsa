@@ -199,7 +199,7 @@ const App = () => {
         currentImageId: systemInfo.currentImageId,
         fileName: currentChar.fileName,
         author: currentAuthor,
-        charId: currentChar.id,
+        charId: currentChar.cId,
         skip,
         charName: currentChar.name,
         date: myDate.toLocaleString(),
