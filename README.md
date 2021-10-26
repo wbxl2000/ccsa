@@ -14,7 +14,7 @@
 
 效果展示：
 
-![ccsa_sample](C:\qerdata\project\ccsa\ccsa_sample.gif)
+![ccsa_sample](https://github.com/wbxl2000/ccsa/blob/main/ccsa_sample.gif)
 
 ## How to use
 
