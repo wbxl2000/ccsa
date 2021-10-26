@@ -14,7 +14,7 @@
 
 效果展示：
 
-![ccsa_sample](https://github.com/wbxl2000/ccsa/blob/main/ccsa_sample.gif)
+![ccsa_sample](https://blog1-1300010026.cos.ap-beijing.myqcloud.com/github/ccsa_sample.gif)
 
 ## How to use
 
