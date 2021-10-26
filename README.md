@@ -12,6 +12,10 @@
 输出应为：
 每一张图片对应的每一种笔画按照顺序的关键点坐标
 
+效果展示：
+
+![ccsa_sample](C:\qerdata\project\ccsa\ccsa_sample.gif)
+
 ## How to use
 
 ### 直接运行此应用
